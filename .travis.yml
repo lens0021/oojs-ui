@@ -1,0 +1,35 @@
+language: node_js
+node_js: '6'
+env:
+  global:
+    - secure: FGehwVMXPh1NqsK0IPPXECIpF7iKzIxIniX+vfY2RYPWUapg+S87x0WoGyz4Ny0tvFTDcTLJKGIesgmgkMEE/EYrgFt1eYg7U7X99f74W+LnvzldfTVReTDSIIHhw42ibb1wGKE+jfnju3XsFVUwYlhmdHKkzaE4yUEbJrbmWosCl0aru+S85nM02QXtmbDfIrbHGQMV5TVH80NzA3JAoZUajJ1eR6+hqHdZt7/aegVRuYeOChCJ8MJgUCYlET3AEBwrcxL9GSvWLsJbmGUY+kdLsN7NLiub441ewqDsX4zpYfYgY4u1Mpufr/4/NGWhv7hu8e88OydzjHluxl/K/Z3GzwvoFAP87WZW8mnfKMp204EC4mh0CLbinNEUTKErspEqo+hA7f7gtcFvyVPjMgg8Ai+TEF6puygHKVgzkEHT8AB1Pj/2l5yvUOT0+eqy6Yp8DiYM0JXHz3bTht8VGT7KoTI8ab8vPN4XAFYGp9HdbDt1qpQXtudMgNJsvYyLTbI26a+7P/hWz4Ylh9bgfbFtanyUZdU7MwcvcCmEkmLfKvGSBDBSqiN1LLqt+ucDcEI6rb0vEBdsn5k/q8WFNOUzpLOV672T6uFEFdEloT6AopzcrojA4NwHKGdN1r2uLO7TE77X9CYNrwkpC2noCBnpnKR32BmD1oSkDTmkFBQ=
+  matrix:
+    - PHPENV_VERSION=7.1
+    - PHPENV_VERSION=7.2
+git:
+  depth: 1
+cache:
+  npm: true
+  directories:
+  - demos/vendor
+install:
+  - phpenv local $PHPENV_VERSION
+  - php --version
+script:
+  - npm install
+  - grunt build --graphics=vector
+after_success:
+  - git config --global user.email "travis@travis-ci.org"
+  - git config --global user.name "Travis CI"
+  - git clone --depth 1 --single-branch --branch REL1_34 https://${GITHUB_TOKEN}@github.com/femiwiki/skin.git ~/skin
+  - mkdir -p ~/skin/resources/ooui/ ~/skin/resources/ooui/images/icons/
+  - cp dist/oojs-ui-*-femiwiki.css ~/skin/resources/ooui/
+  - cp dist/themes/femiwiki/images/icons/*-progressive.svg ~/skin/resources/ooui/images/icons/
+  - cd ~/skin
+  - git add -A
+  - "git commit -m 'OOUI theme update' -m \"travis commit: https://github.com/${TRAVIS_REPO_SLUG}/commit/${TRAVIS_COMMIT}\ntravis build: ${TRAVIS_BUILD_WEB_URL}\""
+  - git push
+
+matrix:
+  allow_failures:
+    - env: PHPENV_VERSION=7.2

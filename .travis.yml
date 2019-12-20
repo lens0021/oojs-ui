@@ -21,7 +21,7 @@ script:
 after_success:
   - git config --global user.email "travis@travis-ci.org"
   - git config --global user.name "Travis CI"
-  - git clone --depth 1 --single-branch --branch REL1_34 https://${GITHUB_TOKEN}@github.com/femiwiki/skin.git ~/skin
+  - git clone --depth 1 https://${GITHUB_TOKEN}@github.com/femiwiki/skin.git ~/skin
   - mkdir -p ~/skin/resources/ooui/ ~/skin/resources/ooui/images/icons/
   - cp dist/oojs-ui-*-femiwiki.css ~/skin/resources/ooui/
   - cp dist/themes/femiwiki/images/icons/*-progressive.svg ~/skin/resources/ooui/images/icons/

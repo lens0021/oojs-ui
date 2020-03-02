@@ -6,6 +6,17 @@ on:
     #   - master
 
 jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2               #/home/runner/work/oojs-ui/oojs-ui
+    - run: pwd
+    - uses: actions/checkout@v2               #/home/runner/work/oojs-ui/oojs-ui/Femiwiki
+      with:
+        repository: lens0021/FemiwikiSkin
+        path: Femiwiki
+    - run: pwd
+
   build:
     runs-on: ubuntu-18.04
 
@@ -28,26 +39,28 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
+    - run: echo $HOME
+
     - name: Build Femiwiki theme
       run: grunt build --graphics=vector
 
     - uses: actions/checkout@v2
       with:
         repository: lens0021/FemiwikiSkin
-        path: ~/Femiwiki
+        path: Femiwiki
 
     - name: Move dist files
       run: |
-        cp dist/oojs-ui-*-femiwiki.css ~/Femiwiki/resources/ooui/
-        cp dist/themes/femiwiki/images/icons/*-progressive.svg ~/Femiwiki/resources/ooui/images/icons/
+        cp dist/oojs-ui-*-femiwiki.css Femiwiki/resources/ooui/
+        cp dist/themes/femiwiki/images/icons/*-progressive.svg Femiwiki/resources/ooui/images/icons/
 
     - run: echo "::set-output name=version::$(echo ${{github.sha}} | cut -c1-8)"
       id: version
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v2
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        path: ~/Femiwiki
+        token: ${{ secrets.BOT_TOKEN }}
+        path: Femiwiki
         commit-message: |
           OOUI theme update to ${{steps.version.outputs.version}}
           related commit: https://github.com/${{github.repository}}/commit/${{steps.version.outputs.version}}
